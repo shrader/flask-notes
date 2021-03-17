@@ -6,7 +6,7 @@ from models import db, connect_db, User
 
 from flask_debugtoolbar import DebugToolbarExtension
 
-from forms import AddUserForm
+from forms import AddUserForm, LoginUserForm
 
 import requests
 
@@ -52,8 +52,44 @@ def register():
         session["user_name"] = name
 
         # on successful login, redirect to secret page
-        return redirect("/secret")
+        return redirect(f"/user/{user.name}")
 
     else:
         return render_template("register.html", form=form)
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    """Login user."""
+
+    form = LoginUserForm()
+
+    if form.validate_on_submit():
+        name = form.username.data
+        pwd = form.password.data
+
+        user = User.authenticate(name, pwd)
+        session["user_name"] = user.username
+
+        # on successful login, redirect to secret page
+        return redirect(f"/users/{user.username}")
+
+    else:
+        return render_template("login.html", form=form)
+
+
+@app.route("/secret")
+def secret():
+    """Display the secret page"""
+  
+    return render_template("secret.html")
+
+@app.route("/users/<username>")
+def user_page(username):
+    """Display the user page for logged-in users"""
+    if session["user_name"] == username:
+
+        user = User.query.filter_by(username=username ).first()
+
+        return render_template("display_user.html", user = user)
 
