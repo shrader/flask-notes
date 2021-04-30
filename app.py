@@ -20,7 +20,8 @@ connect_db(app)
 db.create_all()
 
 from flask_debugtoolbar import DebugToolbarExtension
-app.config['SECRET_KEY'] = "SECRET!"
+#SECRET KEY should obviously be changed and not included in the source code if you intend on deploying
+app.config['SECRET_KEY'] = "SECRET!" 
 debug = DebugToolbarExtension(app)
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
